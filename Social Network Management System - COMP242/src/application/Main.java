@@ -30,7 +30,8 @@ public class Main {
 		System.out.println(list);
 		list.insert(3,10);
 		System.out.println(list);
-
+		System.out.println(list.contains(20));
+		System.out.println(list.contains(70));
 
 //		list.removeFirst();
 //		System.out.println(list);

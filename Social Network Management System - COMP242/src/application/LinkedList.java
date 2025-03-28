@@ -13,6 +13,19 @@ public class LinkedList<T extends Comparable<T>> {
 		return head.getNext() == head;
 	}
 
+	public boolean contains(T data) {
+		if (!isEmpty()) {
+			Node<T> curr = head.getNext();
+			while (curr != head) {
+				if (curr.getData().compareTo(data) == 0) {
+					return true;
+				}
+				curr = curr.getNext();
+			}
+		}
+		return false;
+	}
+
 	public int size() { // Return the number of Nodes in the list
 		Node<T> curr = head.getNext();
 		int size = 0;
