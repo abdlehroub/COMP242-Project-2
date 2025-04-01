@@ -70,4 +70,7 @@ public class User implements Comparable<User> {
 		return postsCreatedList.size() - o.getPostsCreatedList().size();
 	}
 
+	public String toString() {
+		return id + " - " + name;
+	}
 }
