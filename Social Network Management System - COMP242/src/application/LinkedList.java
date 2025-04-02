@@ -1,5 +1,7 @@
 package application;
 
+import java.util.ArrayList;
+
 public class LinkedList<T extends Comparable<T>> {
 	Node<T> head;
 
@@ -17,7 +19,7 @@ public class LinkedList<T extends Comparable<T>> {
 		if (!isEmpty()) {
 			Node<T> curr = head.getNext();
 			while (curr != head) {
-				if (curr.getData().compareTo(data) == 0) {
+				if (curr.getData() == data) {
 					return true;
 				}
 				curr = curr.getNext();
@@ -180,6 +182,27 @@ public class LinkedList<T extends Comparable<T>> {
 	public void clear() { // Clear all elements in the list
 		head.setNext(head);
 		head.setPrev(head);
+	}
+
+	public T get(int index) {
+		if (head.getNext() != head) {
+			Node<T> curr = head.getNext();
+			while (index-- > 0) {
+				curr = curr.getNext();
+			}
+			return curr.getData();
+		}
+		return null;
+	}
+
+	public ArrayList<T> toArrayList() {
+		ArrayList<T> list = new ArrayList<T>();
+		Node<T> curr = head.getNext();
+		while (curr != head) {
+			list.add(curr.getData());
+			curr = curr.getNext();
+		}
+		return list;
 	}
 
 	public String toString() {

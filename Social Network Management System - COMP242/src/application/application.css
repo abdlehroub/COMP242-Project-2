@@ -1,9 +1,12 @@
 /* General styling for tabs */
 .tab {
+  -fx-content-display: CENTER;	
     -fx-background-color: #FFFFFF; /* White tab background */
     -fx-background-radius: 7.0px; 
     -fx-pref-height: 300.0px; /* Tab height */
     -fx-pref-width: 100.0px; /* Tab width */
+        -fx-padding: 0px; /* Add padding for better spacing */
+    
 }
 
 /* Styling for tab labels in all states */
@@ -14,18 +17,26 @@
     -fx-font-family: 'Montserrat';    /* Font family */
     -fx-rotate: 90.0;                  /* Rotate text 90 degrees (vertical) */
     -fx-padding: 7.0px 0.0 0.0 0.0;
-    -fx-alignment: center-right;
-    -fx-text-alignment: right;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+        -fx-translate-x: -0px; /* Move the text slightly for better centering */
+        -fx-spacing: 500px; /* Controls spacing between text labels */
+    
+     
               /* Add top padding to push text upward */
 }
 
 /* Ensure vertical tabs maintain vertical text */
 .tab-pane:vertical .tab-label {
     -fx-rotate: 90.0;
+        -fx-alignment: center;
+    -fx-text-alignment: center;
 }
 
 .tab-pane .tab-header-background {
     -fx-background-color: #FFFFFF;
+        -fx-alignment: center;
+    -fx-text-alignment: center;
  
 }
 
@@ -39,30 +50,38 @@
 .tab:selected .tab-label {
     -fx-text-fill: #FFFFFF;
     -fx-rotate: 90.0;                /* Keep text vertical when selected */
-    -fx-padding: 10.0px 0.0 0.0 0.0;         /* Same top padding for consistency */
+    -fx-padding: 10.0px 0.0 0.0 0.0; 
+        -fx-alignment: center;
+    -fx-text-alignment: center;        /* Same top padding for consistency */
 }
 
 /* Styling on hover (optional) */
 .tab:hover {
     -fx-background-color: #635bff;
         -fx-text-fill: #FFFFFF;
+            -fx-alignment: center;
+    -fx-text-alignment: center;
     
 }
 
 .tab:hover .tab-label {
     -fx-text-fill: #FFFFFF;
     -fx-padding: 10.0px 0.0 0.0 0.0;
-  -fx-alignment: center-right;
-    -fx-text-alignment: right;
+
+        -fx-alignment: center;
+    -fx-text-alignment: center;
     
 }
 
 .tab-pane .tab {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+        -fx-alignment: center;
+    -fx-text-alignment: center;
 }
 .tab-pane .tab-header-area {
     -fx-translate-y: 80px; /* Moves tabs 30px down */
+        -fx-alignment: center;
 }
 
 
@@ -160,6 +179,8 @@
     /* Keep the text horizontal by default (rotate: 0). 
        If you need vertical text, you can add -fx-rotate: 90 here. */
     -fx-rotate: 90.0; 
+            -fx-spacing: 500px; /* Controls spacing between text labels */
+    
 }
 
 /* Text color when a tab is selected */

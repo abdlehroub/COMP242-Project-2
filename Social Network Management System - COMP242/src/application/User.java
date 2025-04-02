@@ -1,5 +1,7 @@
 package application;
 
+import javafx.beans.property.SimpleBooleanProperty;
+
 public class User implements Comparable<User> {
 	private String id;
 	private String name;
@@ -7,11 +9,16 @@ public class User implements Comparable<User> {
 	private LinkedList<User> friendsList;
 	private LinkedList<Post> postsCreatedList;
 	private LinkedList<Post> sharedWithThemPostsList;
+    private  SimpleBooleanProperty selected;
 
-	public User(String id, String name, int age) {
+
+	public User(String id, String name, int age ) {
 		setId(id);
 		this.name = name;
 		this.age = age;
+		friendsList = new LinkedList<User>();
+		postsCreatedList = new LinkedList<Post>();
+		sharedWithThemPostsList = new LinkedList<Post>();
 	}
 
 	public void setId(String id) {
@@ -64,6 +71,17 @@ public class User implements Comparable<User> {
 	public LinkedList<Post> getSharedWithThemPostsList() {
 		return sharedWithThemPostsList;
 	}
+	public boolean isSelected() {
+        return selected.get();
+    }
+
+    public SimpleBooleanProperty selectedProperty() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
+    }
 
 	@Override
 	public int compareTo(User o) {

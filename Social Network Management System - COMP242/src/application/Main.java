@@ -14,6 +14,19 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			User user = new User("123", "Omar", 20);
+			User user2 = new User("124", "Zaid", 40);
+			User user3 = new User("125", "Ahmad", 27);
+
+			user.addFreind(user3);
+			
+			usersList.addFirst(user);
+			usersList.addFirst(user2);
+			usersList.addFirst(user3);
+			
+			usersObList.addAll(usersList.toArrayList());
+
+			
 			HomeScene home = new HomeScene();
 			primaryStage.setScene(home);
 			primaryStage.setMaximized(true);
