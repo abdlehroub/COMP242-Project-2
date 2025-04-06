@@ -1,6 +1,5 @@
 package application;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -46,9 +45,9 @@ public class FriendshipManagement extends BorderPane {
 		searchTf.setPromptText("Enter the User ID:");
 
 		searchB = new MyButton();
-		searchB.setText("✔");
+		searchB.setText("Search");
 		searchB.setPrefHeight(26);
-		searchB.setPrefWidth(40);
+		searchB.setPrefWidth(80);
 
 		upperHb.getChildren().addAll(searchTf, searchB);
 		upperHb.setSpacing(20);
@@ -69,7 +68,7 @@ public class FriendshipManagement extends BorderPane {
 
 //		Add the items of the lower HBox to it
 		lowerHb.getChildren().addAll(addB, deleteB);
-		HBox.setMargin(searchTf, new Insets(0, 0, 0, 2));
+		HBox.setMargin(searchTf, new Insets(0, 650, 0, 2));
 		lowerHb.setSpacing(10);
 		lowerHb.setAlignment(Pos.CENTER);
 
@@ -86,7 +85,7 @@ public class FriendshipManagement extends BorderPane {
 		usersTable.autosize();
 		usersTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		usersTable.setItems(friendsList);
-
+		usersTable.setPrefHeight(550);
 		usersTable.getColumns().addAll(id, title, age);
 
 		manageVb.getChildren().addAll(upperHb, usersTable, lowerHb);
@@ -96,10 +95,12 @@ public class FriendshipManagement extends BorderPane {
 //		Search Action to display and do operations on specific user
 		searchB.setOnAction(e -> {
 			currUser = searchUser();
-			friendsList = FXCollections.observableArrayList(currUser.getFriendsList().toArrayList());
-			addB.setDisable(false);
-			deleteB.setDisable(false);
-			usersTable.setItems(friendsList);
+			if (currUser != null) {
+				friendsList = FXCollections.observableArrayList(currUser.getFriendsList().toArrayList());
+				addB.setDisable(false);
+				deleteB.setDisable(false);
+				usersTable.setItems(friendsList);
+			}
 
 		});
 

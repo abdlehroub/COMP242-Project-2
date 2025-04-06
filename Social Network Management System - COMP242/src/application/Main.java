@@ -1,5 +1,6 @@
 package application;
 
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,9 +18,9 @@ public class Main extends Application {
 			User user = new User("123", "Omar", 20);
 			User user2 = new User("124", "Zaid", 40);
 			User user3 = new User("125", "Ahmad", 27);
-			User user4 = new User("125", "Wadee", 30);
-			User user5 = new User("125", "Waseem", 41);
-			User user6 = new User("125", "Jihad", 19);
+			User user4 = new User("126", "Wadee", 30);
+			User user5 = new User("127", "Waseem", 41);
+			User user6 = new User("128", "Jihad", 19);
 
 			user.addFreind(user3);
 			
@@ -29,6 +30,12 @@ public class Main extends Application {
 			usersList.addFirst(user4);
 			usersList.addFirst(user5);
 			usersList.addFirst(user6);
+//			Post psot = new Post(1, user6, "hello", new GregorianCalendar(2022,1,1));
+
+//			psot.addSharedWith(user5);
+//			psot.addSharedWith(user);
+//			psot.addSharedWith(user2);
+
 
 
 			
@@ -38,7 +45,8 @@ public class Main extends Application {
 			HomeScene home = new HomeScene();
 			primaryStage.setScene(home);
 			primaryStage.setMaximized(true);
-			primaryStage.setTitle("AE Library");
+			primaryStage.setResizable(false);
+			primaryStage.setTitle("AE Social Network");
 			primaryStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();

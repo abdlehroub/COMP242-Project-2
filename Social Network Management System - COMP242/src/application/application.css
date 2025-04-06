@@ -102,9 +102,7 @@
     -fx-padding: 8.0 12.0;                  /* Vertical 8px, Horizontal 12px */
     -fx-background-radius: 4.0;
     -fx-text-fill: #333333;             /* Dark text color */
-    -fx-font-size: 10.0px;
-    -fx-font-family: 'Montserrat';
-    -fx-font-weight: bold;            /* Bold font */
+          /* Bold font */
     
 }
 
@@ -143,18 +141,12 @@
 
 
 /* Styling for the graphic (image) in tabs */
-.tab .graphic {
-    -fx-fill: #635bff;  /* Default graphic color */
-}
 
-.tab:selected .graphic,
-.tab:hover .graphic {
-    -fx-fill: #FFFFFF;  /* Change graphic color when tab is selected or hovered */
-}
+
+
 /* Remove default tab animations for a snappier UI */
 .tab-pane {
-    -fx-open-tab-animation: NONE;
-    -fx-close-tab-animation: NONE;
+   
     -fx-background-color: #f5f8fc;
 }
 
@@ -176,8 +168,7 @@
     -fx-font-weight: bold;
     -fx-font-family: 'Montserrat';
     -fx-padding: 8.0px;
-    /* Keep the text horizontal by default (rotate: 0). 
-       If you need vertical text, you can add -fx-rotate: 90 here. */
+
     -fx-rotate: 90.0; 
             -fx-spacing: 500px; /* Controls spacing between text labels */
     
@@ -194,15 +185,9 @@
 }
 
 /* Graphics (icons) inside tabs */
-.tab .graphic {
-    -fx-padding: 4.0px;
-}
 
-.tab:selected .graphic,
-.tab:hover .graphic {
-    /* Example: -fx-fill: #FFFFFF; 
-       This only works if the graphic is an SVGPath or similar. */
-}
+
+
 
 .text-field {
     /* Subtler rounding: 8px corners instead of 20px */
@@ -577,4 +562,178 @@
     
 }
 
+.date-picker {
+	-fx-border-color: transparent;
+		-fx-background-color: transparent;
+		-fx-min-width: 180px;
+       -fx-min-height: 30px;
+        -fx-pref-width: 60px;
+       -fx-pref-height: 30px;
+	
+}
+
+/* DatePicker Text Field */
+.date-picker .text-field {
+    -fx-background-color: white;
+    -fx-border-color: #6366F1; /* Purple border */
+    -fx-border-radius: 10px 0px 0px 10px;
+    -fx-background-radius: 10px 0px 0px 10px;
+    -fx-font-size: 10px;
+    -fx-text-fill: #6366F1;
+    -fx-prompt-text-fill: #bbb;
+    
+   
+}
+
+/* DatePicker Popup Button */
+.date-picker .arrow-button {
+    -fx-background-color: #6366F1; /* Purple */
+    -fx-background-radius: 0px 7px 7px 0px;
+    -fx-padding: 10px , 15px , 15px , 15px;
+    -fx-min-width: 60px;
+       -fx-min-height: 1000px;
+        -fx-pref-width: 60px;
+       -fx-pref-height: 80px;
+    
+    
+}
+
+
+
+.date-picker .arrow-button:hover {
+	-fx-text-fill: white;
+    -fx-background-color: #4F46E5;
+}
+.date-picker .spinner .button{
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+	-fx-background-radius: 5px;
+	-fx-border-radius: 5px;
+	
+}
+.date-picker .spinner .button:hover{
+-fx-background-color: #6366F1;
+	-fx-text-fill: white;	
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+
+/* DatePicker Calendar Popup */
+.date-picker-popup {
+    -fx-background-color: white;
+    -fx-border-color: #6366F1;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px;
+    -fx-pref-height: 190;
+        -fx-pref-width: 190;
+            -fx-font-size: 7;
+    
+        -fx-font-family: "Montserrart";
+            -fx-background-radius: 10px;
+    
+}
+
+/* Calendar Cells */
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #6366F1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+        -fx-font-size: 7;
+    
+        -fx-font-family: "Montserrart";
+        -fx-border-radius: 10px;
+            -fx-background-radius: 10px;
+    
+    -fx-padding: 5px;
+}
+
+.date-picker-popup .day-cell {
+    -fx-border-radius: 5px;
+            -fx-font-size: 9;
+    
+    -fx-padding: 5px;
+        -fx-font-family: "Montserrart";
+    
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #E0E7FF; /* Light purple hover */
+            -fx-font-size: 9;
+    
+    
+}
+
+.date-picker-popup .selected {
+    -fx-background-color: #4F46E5 !important;
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
+            -fx-font-size: 10;
+    
+        -fx-font-family: "Montserrart";
+    
+}
+.date-picker .calendar-grid{
+	    -fx-background-color: white !important;
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
+        -fx-font-family: "Montserrart";
+        -fx-background-radius: 10px;
+        -fx-border-radius: 10px;
+                -fx-font-size: 10;
+        
+}
+.date-picker-popup-content{
+	    -fx-background-color: #4F46E5 !important;
+    -fx-text-fill: white !important;
+        -fx-font-family: "Montserrart";
+        -fx-background-radius: 10px;
+        -fx-border-radius: 10px;
+}
+/* Today’s Date Style */
+.date-picker-popup .today {
+    -fx-background-color: #A5B4FC;
+    -fx-text-fill: black;    -fx-font-family: "Montserrart";
+    
+    -fx-font-weight: bold;
+}
+
+.text-area {
+    -fx-background-color: white;
+    -fx-border-color: #6366F1; /* Purple Border */
+    -fx-border-radius: 20px; /* Outer Border Fully Rounded */
+    -fx-background-radius: 20px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #4F46E5;
+}
+
+/* Style the Inner Content */
+.text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 20px; /* Inner Content Rounded */
+}
+
+/* Remove Default Border */
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+}
+
+/* Style the Scroll Bars */
+.text-area .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+/* Style the Scroll Thumb */
+.text-area .scroll-bar .thumb {
+    -fx-background-color: #6366F1; /* Purple Scroll Bar */
+    -fx-background-radius: 20px; /* Rounded Scroll */
+}.text-area .scroll-pane .viewport {
+    -fx-background-radius: 20px;
+    -fx-background-color: transparent;
+}
 

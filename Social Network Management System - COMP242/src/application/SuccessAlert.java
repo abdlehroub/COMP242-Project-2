@@ -2,6 +2,7 @@ package application;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class SuccessAlert {
 
@@ -14,6 +15,7 @@ public class SuccessAlert {
 		alert.setTitle("Done");
 		alert.setHeaderText(message);
 		alert.getDialogPane().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		alert.getButtonTypes().add(new ButtonType("cancel"));
 		alert.showAndWait();
 	}
 

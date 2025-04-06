@@ -195,6 +195,33 @@ public class LinkedList<T extends Comparable<T>> {
 		return null;
 	}
 
+	public T getFirst() {
+		if (!isEmpty())
+			return head.getNext().getData();
+		return null;
+	}
+
+	private Node<T> getNode(T data) {
+		if (head.getNext() != head) {
+			Node<T> curr = head.getNext();
+			while (curr != head) {
+				if (curr.getData() == data)
+					return curr;
+				curr = curr.getNext();
+			}
+		}
+		return head;
+
+	}
+
+	public T getNext(T curr) {
+		return getNode(curr).getNext() != head ? getNode(curr).getNext().getData() : head.getNext().getData();
+	}
+
+	public T getPrev(T curr) {
+		return getNode(curr).getPrev() != head ? getNode(curr).getPrev().getData() : head.getPrev().getData();
+	}
+
 	public ArrayList<T> toArrayList() {
 		ArrayList<T> list = new ArrayList<T>();
 		Node<T> curr = head.getNext();

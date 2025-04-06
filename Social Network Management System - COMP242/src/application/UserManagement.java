@@ -1,6 +1,7 @@
 package application;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -36,6 +37,7 @@ public class UserManagement extends BorderPane {
 //		Search TextField
 		TextField searchTf = new TextField();
 		searchTf.setPrefHeight(30);
+		searchTf.setPrefWidth(300);
 		searchTf.setPromptText("Search Users");
 
 //		RadioButtons to select the filter type
@@ -51,14 +53,14 @@ public class UserManagement extends BorderPane {
 //		Button to add User manually
 		MyButton addB = new MyButton();
 		addB.setText("Add");
-		addB.setPrefHeight(30);
+		addB.setPrefHeight(25);
 		addB.setPrefWidth(70);
 
 //		ContextMenu to give more options 
 		ContextMenu actionsM = new ContextMenu();
 		MyButton actionsB = new MyButton();
 		actionsB.setText("More Actions");
-		actionsB.setPrefHeight(30);
+		actionsB.setPrefHeight(25);
 		actionsB.setPrefWidth(140);
 
 //		Items of the ContextMenu
@@ -70,9 +72,10 @@ public class UserManagement extends BorderPane {
 
 //		Add the items of the upper HBox to it
 		upperHb.getChildren().addAll(searchTf, nameRb, idRb, addB, actionsB);
-		HBox.setMargin(idRb, new Insets(0, 630, 0, 0));
+		HBox.setMargin(idRb, new Insets(0, 470, 0, 0));
 		HBox.setMargin(searchTf, new Insets(0, 0, 0, 2));
 		upperHb.setSpacing(10);
+		upperHb.setAlignment(Pos.CENTER);
 
 //		Create TableView to display the users in the system
 		usersTable = new TableView<User>();
@@ -82,7 +85,6 @@ public class UserManagement extends BorderPane {
 		usersTable.setStyle("  -fx-background-color: white;\r\n" + "    -fx-background-radius: 10;\r\n"
 				+ "    -fx-border-radius: 10;\r\n" + "    -fx-border-color: #E5E7EB;\r\n" + "    -fx-border-width: 1;");
 		usersTable.getColumns().addAll(id, title, age);
-
 		id.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
 		title.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
 		age.setCellValueFactory(new PropertyValueFactory<User, Integer>("age"));
@@ -102,9 +104,9 @@ public class UserManagement extends BorderPane {
 
 		Stage addStage = new Stage();
 		addStage.setTitle("Add User");
-		AddPage addPage = new AddPage(600, 400);
+		AddUserPage addUserPage = new AddUserPage(600, 400);
 		addStage.setResizable(false);
-		addStage.setScene(addPage);
+		addStage.setScene(addUserPage);
 
 //		Action to display the add stage
 		addB.setOnAction(e -> {

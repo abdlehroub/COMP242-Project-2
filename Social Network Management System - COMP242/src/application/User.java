@@ -9,10 +9,10 @@ public class User implements Comparable<User> {
 	private LinkedList<User> friendsList;
 	private LinkedList<Post> postsCreatedList;
 	private LinkedList<Post> sharedWithThemPostsList;
-    private  SimpleBooleanProperty selected;
+	private SimpleBooleanProperty selected;
+	private static LinkedList<String> ids;
 
-
-	public User(String id, String name, int age ) {
+	public User(String id, String name, int age) throws IllegalAccessException {
 		setId(id);
 		this.name = name;
 		this.age = age;
@@ -21,11 +21,11 @@ public class User implements Comparable<User> {
 		sharedWithThemPostsList = new LinkedList<Post>();
 	}
 
-	public void setId(String id) {
-		if (id.matches("^[0-9]+$"))
+	public void setId(String id) throws IllegalAccessException {
+		if (!ids.contains(id))
 			this.id = id;
 		else
-			throw new IllegalArgumentException("Error: Invalid UserId, it must be only numbers!");
+			throw new IllegalAccessException("Error: Invalid UserId");
 	}
 
 	public String getId() {
@@ -64,6 +64,16 @@ public class User implements Comparable<User> {
 		return postsCreatedList;
 	}
 
+	public void removePost(Post post) {
+		post.removePost();
+		postsCreatedList.remove(post);
+	}
+
+	public void removeOthersPost(Post post) {
+		sharedWithThemPostsList.remove(post);
+		post.getSharedWithList().remove(this);
+	}
+
 	public void createPost(Post post) {
 		this.postsCreatedList.addFirst(post);
 	}
@@ -71,17 +81,18 @@ public class User implements Comparable<User> {
 	public LinkedList<Post> getSharedWithThemPostsList() {
 		return sharedWithThemPostsList;
 	}
+
 	public boolean isSelected() {
-        return selected.get();
-    }
+		return selected.get();
+	}
 
-    public SimpleBooleanProperty selectedProperty() {
-        return selected;
-    }
+	public SimpleBooleanProperty selectedProperty() {
+		return selected;
+	}
 
-    public void setSelected(boolean selected) {
-        this.selected.set(selected);
-    }
+	public void setSelected(boolean selected) {
+		this.selected.set(selected);
+	}
 
 	@Override
 	public int compareTo(User o) {

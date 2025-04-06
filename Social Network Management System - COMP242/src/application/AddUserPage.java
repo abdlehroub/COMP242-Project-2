@@ -11,8 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class AddPage extends Scene {
-	static BorderPane addPane = new BorderPane();
+public class AddUserPage extends Scene {
+	private static BorderPane addPane = new BorderPane();
 	private TextField idTf;
 	private TextField nameTf;
 	private TextField ageTf;
@@ -21,7 +21,7 @@ public class AddPage extends Scene {
 	private MyButton clearB;
 	private MyButton cancelB;
 
-	public AddPage(double h, double w) {
+	public AddUserPage(double h, double w) {
 		super(addPane, h, w);
 
 //		create labels for the text fields
