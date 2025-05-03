@@ -242,7 +242,10 @@ class SelectFriendsPage extends Scene {
 		buttonsHb.getChildren().addAll(getDoneB(), cancelB);
 
 //		Create the list view to enable for the user to select the friends those he want to share the post with him
-		freindsLv = new ListView<User>(FXCollections.observableList(this.currUser.getFriendsList().toArrayList()));
+		if(currUser!= null)
+			freindsLv = new ListView<User>(FXCollections.observableList(this.currUser.getFriendsList().toArrayList()));
+		else
+			freindsLv = new ListView<User>();
 		freindsLv.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE);
 		freindsLv.setMaxHeight(300);
 		freindsLv.setMaxWidth(400);

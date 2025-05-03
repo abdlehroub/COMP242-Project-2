@@ -1,8 +1,16 @@
 package application;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
@@ -13,11 +21,17 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Scale;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class UserManagement extends BorderPane {
-	private TableView<User> usersTable;
+	private static TableView<User> usersTable;
+	private TextField searchTf;
+	private File file;
+	private MyButton addB;
 
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public UserManagement() {
@@ -35,7 +49,7 @@ public class UserManagement extends BorderPane {
 		HBox upperHb = new HBox();
 
 //		Search TextField
-		TextField searchTf = new TextField();
+		searchTf = new TextField();
 		searchTf.setPrefHeight(30);
 		searchTf.setPrefWidth(300);
 		searchTf.setPromptText("Search Users");
@@ -51,10 +65,18 @@ public class UserManagement extends BorderPane {
 		idRb.setSelected(true);
 
 //		Button to add User manually
-		MyButton addB = new MyButton();
+		addB = new MyButton();
 		addB.setText("Add");
 		addB.setPrefHeight(25);
 		addB.setPrefWidth(70);
+
+		ToggleGroup sortGroup = new ToggleGroup();
+		RadioButton ascRb = new RadioButton("ASC");
+		RadioButton descRb = new RadioButton("DESC");
+		ascRb.setSelected(true);
+		ascRb.setToggleGroup(sortGroup);
+		descRb.setToggleGroup(sortGroup);
+		HBox radioButtonsHb = new HBox(ascRb, descRb);
 
 //		ContextMenu to give more options 
 		ContextMenu actionsM = new ContextMenu();
@@ -71,8 +93,8 @@ public class UserManagement extends BorderPane {
 		actionsM.getItems().addAll(loadMi, exportMi, editMi, deleteMi);
 
 //		Add the items of the upper HBox to it
-		upperHb.getChildren().addAll(searchTf, nameRb, idRb, addB, actionsB);
-		HBox.setMargin(idRb, new Insets(0, 470, 0, 0));
+		upperHb.getChildren().addAll(searchTf, nameRb, idRb, addB, actionsB, radioButtonsHb);
+		HBox.setMargin(idRb, new Insets(0, 300, 0, 0));
 		HBox.setMargin(searchTf, new Insets(0, 0, 0, 2));
 		upperHb.setSpacing(10);
 		upperHb.setAlignment(Pos.CENTER);
@@ -80,13 +102,13 @@ public class UserManagement extends BorderPane {
 //		Create TableView to display the users in the system
 		usersTable = new TableView<User>();
 		TableColumn<User, String> id = new TableColumn<User, String>("UserID");
-		TableColumn<User, String> title = new TableColumn<User, String>("User Name");
+		TableColumn<User, String> name = new TableColumn<User, String>("User Name");
 		TableColumn<User, Integer> age = new TableColumn<User, Integer>("Age");
 		usersTable.setStyle("  -fx-background-color: white;\r\n" + "    -fx-background-radius: 10;\r\n"
 				+ "    -fx-border-radius: 10;\r\n" + "    -fx-border-color: #E5E7EB;\r\n" + "    -fx-border-width: 1;");
-		usersTable.getColumns().addAll(id, title, age);
+		usersTable.getColumns().addAll(id, name, age);
 		id.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
-		title.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
+		name.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
 		age.setCellValueFactory(new PropertyValueFactory<User, Integer>("age"));
 		usersTable.autosize();
 		usersTable.setMinHeight(550);
@@ -113,42 +135,171 @@ public class UserManagement extends BorderPane {
 			addStage.show();
 		});
 
+		Stage updateStage = new Stage();
+		Scene updateScene = new Scene(new Pane(), 600, 400);
+		updateStage.setResizable(false);
+		updateStage.setScene(updateScene);
 		editMi.setOnAction(e -> {
-			editUser();
+			User selectedUser = usersTable.getSelectionModel().getSelectedItem();
+			if (selectedUser != null) {
+				UpdatePage updatePage = new UpdatePage(selectedUser);
+				updateScene.setRoot(updatePage);
+				updateStage.show();
+			} else {
+				new ErrorAlert("There is No User selected!");
+			}
 		});
-		
-		deleteMi.setOnAction(e->{
-			deleteBook();
+
+		deleteMi.setOnAction(e -> {
+			deleteUser();
+		});
+
+		searchTf.setOnKeyTyped(e -> {
+			if (!searchTf.getText().isEmpty())
+				if (idRb.isSelected())
+					filtered("ID");
+				else
+					filtered("Name");
+			else
+				usersTable.setItems(Main.usersObList);
+		});
+		loadMi.setOnAction(e -> {
+			try {
+				readFromFile();
+			} catch (FileNotFoundException e1) {
+				new ErrorAlert("Error: No File Selected");
+			} catch (NullPointerException e2) {
+				new ErrorAlert("Error: No File Selected");
+			}
+		});
+
+		exportMi.setOnAction(e -> {
+			try {
+				exportToFile(ascRb.isSelected());
+			} catch (FileNotFoundException e1) {
+				new ErrorAlert("Error: File Not found!");
+			} catch (NullPointerException e2) {
+				new ErrorAlert("Error: No File Selected");
+			}
 		});
 
 	}
 
-	public void editUser() {
-		User selectedBook = usersTable.getSelectionModel().getSelectedItem();
-		if (selectedBook != null) {
-//			Create stage to update Selected book from the table view
-			Stage updateStage = new Stage();
-			UpdatePage updatePage = new UpdatePage(600, 400, selectedBook);
-			updateStage.setResizable(false);
-			updateStage.setScene(updatePage);
-			updateStage.show();
+	
+	public void readFromFile() throws FileNotFoundException {
+//		Call the file chooser method
+		fileChooser();
+//		Create Scanner to read from file
+		Scanner in = new Scanner(file);
+		int errorCount = 0;
+		while (in.hasNext()) {
+			try {
+//				Read full line from file and split it by using comma as delimiter
+				String[] line = in.nextLine().split(",");
+				String id = line[0];
+				String name = line[1];
+				int age = Integer.parseInt(line[2]);
+				User user = new User(id, name, age);
+				Main.usersList.insertSorted(user);
+				Main.usersObList.add(user);
+			} catch (NumberFormatException e) {
+				errorCount++;
+			} catch (IllegalArgumentException e) {
+				errorCount++;
+			} catch (NullPointerException e) {
+				new ErrorAlert("Error: No File Selected");
+			} catch (ArrayIndexOutOfBoundsException e) {
+				new ErrorAlert("Error: Invalid File Format");
+			}
 
-		} else {
-			new ErrorAlert("There is No User selected!");
 		}
+		if (errorCount > 0)
+			new ErrorAlert("Error: File data are loaded with [" + errorCount + "] Errors!");
+		else
+			new SuccessAlert("Great: File data are loaded without any error!");
+
 	}
 
-//	Method to delete book from the array of books
-	public void deleteBook() {
+	public void exportToFile(boolean asc) throws FileNotFoundException {
+		fileChooser();
+		PrintWriter out = new PrintWriter(file);
+		if (asc) {
+//			If the user select the ascending choice
+			for (User user : Main.usersList) {
+				out.println(user.getId() + "," + user.getName() + "," + user.getAge());
+			}
+		} else {
+			for (User user : Main.usersList.reverseIterable()) {
+				out.println(user.getId() + "," + user.getName() + "," + user.getAge());
+			}
+		}
+		out.close();
+
+	}
+
+//	method to open file chooser dialog
+	public void fileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+		file = fileChooser.showOpenDialog(new Stage());
+	}
+
+//	Display the users depends on the search TextField
+	public void filtered(String filterBy) {
+		ObservableList<User> filterdList = FXCollections.observableArrayList();
+		for (User user : usersTable.getItems()) {
+			if (filterBy.equals("Name")) {
+				if (user.getName().toLowerCase().trim().startsWith(searchTf.getText().toLowerCase().trim())) {
+					filterdList.add(user);
+				}
+			} else {
+				if (user.getId().toLowerCase().trim().startsWith(searchTf.getText().toLowerCase().trim())) {
+					filterdList.add(user);
+				}
+			}
+		}
+		usersTable.setItems(filterdList);
+
+	}
+
+//	Method to delete user from the array of books
+	public void deleteUser() {
 //		Get the book selected in the table view
 		User selectedUser = usersTable.getSelectionModel().getSelectedItem();
 		if (selectedUser != null) {
+			for (User user : Main.usersList) {
+				user.getFriendsList().remove(selectedUser);
+				for (Post post : user.getPostsCreatedList()) {
+					post.removeSharedWith(selectedUser);
+				}
+			}
 			Main.usersList.remove(selectedUser);
 			Main.usersObList.remove(selectedUser);
+			User.getIds().remove(selectedUser.getId());
 		} else {
 			new ErrorAlert("There is No User selected!");
 		}
 
 	}
+
+	public static TableView<User> getUsersTable() {
+		return usersTable;
+	}
+
+	public static void setUsersTable(TableView<User> usersTable) {
+		UserManagement.usersTable = usersTable;
+	}
+
+
+	public MyButton getAddB() {
+		return addB;
+	}
+
+
+	public void setAddB(MyButton addB) {
+		this.addB = addB;
+	}
+	
+	
 
 }

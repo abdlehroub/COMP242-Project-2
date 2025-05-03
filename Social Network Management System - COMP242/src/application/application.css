@@ -736,4 +736,33 @@
     -fx-background-radius: 20px;
     -fx-background-color: transparent;
 }
+.menu-bar {
+    -fx-background-color: white; /* Light background like in your screenshot */
+    -fx-padding: 0 0 0px 2px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0;
+    -fx-max-width:  304px;
+ 
+}
+
+.menu-bar .menu {
+    -fx-text-fill: #333;
+    
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: #6366F1; /* subtle hover effect */
+    -fx-background-radius: 5px;
+}
+
+.menu:showing,
+.menu:focused,
+.menu:armed {
+    -fx-background-color: #6366F1; /* Purple */
+    -fx-text-fill: white;
+        -fx-background-radius: 5px;
+    
+}
+
+
 

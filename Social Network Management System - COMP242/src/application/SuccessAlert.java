@@ -15,7 +15,6 @@ public class SuccessAlert {
 		alert.setTitle("Done");
 		alert.setHeaderText(message);
 		alert.getDialogPane().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		alert.getButtonTypes().add(new ButtonType("cancel"));
 		alert.showAndWait();
 	}
 

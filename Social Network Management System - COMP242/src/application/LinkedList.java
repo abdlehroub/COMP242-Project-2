@@ -1,9 +1,12 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
-public class LinkedList<T extends Comparable<T>> {
-	Node<T> head;
+public class LinkedList<T extends Comparable<T>> implements Iterable<T> {
+	private Node<T> head;
+	private int size;
 
 	public LinkedList() { // To Create dummy head
 		head = new Node<T>(null);
@@ -19,7 +22,7 @@ public class LinkedList<T extends Comparable<T>> {
 		if (!isEmpty()) {
 			Node<T> curr = head.getNext();
 			while (curr != head) {
-				if (curr.getData() == data) {
+				if (curr.getData().equals(data)) {
 					return true;
 				}
 				curr = curr.getNext();
@@ -50,6 +53,26 @@ public class LinkedList<T extends Comparable<T>> {
 		}
 		node.setPrev(head);
 		head.setNext(node);
+		size++;
+	}
+
+	public void addAll(LinkedList<T> added) {
+		if (!(added == null || added.isEmpty())) {
+			Node<T> thisLast = head.getPrev();
+			Node<T> otherFirst = added.head.getNext();
+			Node<T> otherLast = added.head.getPrev();
+			thisLast.setNext(otherFirst);
+			otherFirst.setPrev(thisLast);
+			otherLast.setNext(this.head);
+			this.head.setPrev(otherLast);
+			this.size += added.getSize();
+		}
+	}
+
+	public void addAll(Collection<T> list) {
+		for (T t : list) {
+			addFirst(t);
+		}
 	}
 
 	public void insertSorted(T data) { // For Sorted Linked-List
@@ -73,11 +96,15 @@ public class LinkedList<T extends Comparable<T>> {
 				node.setPrev(curr);
 				curr.setNext(node);
 				head.setPrev(node);
+				size++;
+
 			} else { // Case 4 -> if the pointer stopped on node in the middle of the list
 				node.setNext(curr);
 				node.setPrev(curr.getPrev());
 				curr.getPrev().setNext(node);
 				curr.setPrev(node);
+				size++;
+
 			}
 		}
 	}
@@ -88,6 +115,7 @@ public class LinkedList<T extends Comparable<T>> {
 		node.setPrev(head.getNext());
 		head.getPrev().setNext(node);
 		head.setPrev(node);
+		size++;
 	}
 
 	public void insert(int index, T data) { // Insert node in the list with specific index
@@ -101,6 +129,7 @@ public class LinkedList<T extends Comparable<T>> {
 			node.setPrev(curr.getPrev());
 			curr.getPrev().setNext(node);
 			curr.setPrev(node);
+			size++;
 		} else {
 			System.out.println("Invalid index!");
 		}
@@ -110,6 +139,7 @@ public class LinkedList<T extends Comparable<T>> {
 	public T removeFirst() { // Remove the first node in the list
 		T data = head.getNext().getData();
 		head.setNext(head.getNext().getNext());
+		size--;
 		return data;
 	}
 
@@ -124,6 +154,7 @@ public class LinkedList<T extends Comparable<T>> {
 			T data = curr.getData();
 			curr.getPrev().setNext(curr.getNext());
 			curr.getNext().setPrev(curr.getPrev());
+			size--;
 			return data;
 		} else {
 			System.out.println("Index Out Of Bound!!");
@@ -137,11 +168,13 @@ public class LinkedList<T extends Comparable<T>> {
 		} else {
 			Node<T> curr = head.getNext();
 			while (curr != head) {
-				if (curr.getData().compareTo(data) == 0) {
+				if (curr.getData() == data) {
 					curr.getPrev().setNext(curr.getNext());
 					curr.getNext().setPrev(curr.getPrev());
+					size--;
 					return true;
 				}
+				size--;
 				curr = curr.getNext();
 			}
 		}
@@ -155,6 +188,7 @@ public class LinkedList<T extends Comparable<T>> {
 			T data = head.getPrev().getData();
 			head.getPrev().getPrev().setNext(head);
 			head.setPrev(head.getPrev().getPrev());
+			size--;
 			return data;
 		}
 		return null;
@@ -166,9 +200,10 @@ public class LinkedList<T extends Comparable<T>> {
 	}
 
 	private void removeDuplicate(Node<T> curr) { // Helper method to remove duplicated nodes recursively
-		if (curr.getNext() == head) // Base Case when the current on the last node in the list
+		if (curr.getNext() == head) { // Base Case when the current on the last node in the list
+			this.size = size();
 			return;
-		else {
+		} else {
 			if (curr.getNext().getData().compareTo(curr.getData()) == 0) {
 				curr.setNext(curr.getNext().getNext());
 				curr.getNext().setPrev(curr);
@@ -182,6 +217,7 @@ public class LinkedList<T extends Comparable<T>> {
 	public void clear() { // Clear all elements in the list
 		head.setNext(head);
 		head.setPrev(head);
+		size = 0;
 	}
 
 	public T get(int index) {
@@ -198,6 +234,12 @@ public class LinkedList<T extends Comparable<T>> {
 	public T getFirst() {
 		if (!isEmpty())
 			return head.getNext().getData();
+		return null;
+	}
+
+	public T getLast() {
+		if (!isEmpty())
+			return head.getPrev().getData();
 		return null;
 	}
 
@@ -232,6 +274,67 @@ public class LinkedList<T extends Comparable<T>> {
 		return list;
 	}
 
+	public int getSize() {
+		return this.size;
+	}
+
+	public Iterator<T> iterator() {
+		return new ListIterator();
+	}
+
+	private class ListIterator implements Iterator<T> {
+		private Node<T> curr = head.getNext();
+
+		public boolean hasNext() {
+			return curr != head;
+		}
+
+		public T next() {
+			T t = curr.getData();
+			curr = curr.getNext();
+			return t;
+		}
+	}
+
+	public Iterable<T> reverseIterable() {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				return new Iterator<T>() {
+					private Node<T> curr = head.getPrev();
+
+					public boolean hasNext() {
+						return curr != head;
+					}
+
+					public T next() {
+						T data = curr.getData();
+						curr = curr.getPrev();
+						return data;
+					}
+				};
+			}
+		};
+	}
+
+	public T getMiddle() {
+		if (head.getNext() != head)
+			return getMiddle(head.getNext()).getData();
+		else
+			return null;
+	}
+
+	private Node<T> getMiddle(Node<T> start) {
+		Node<T> fast = start;
+		Node<T> slow = start;
+
+		while (fast != head && fast.getNext() != head) {
+			fast = fast.getNext().getNext();
+			slow = slow.getNext();
+		}
+		return slow;
+	}
+
+	@Override
 	public String toString() {
 		String s = "Head->";
 		Node<T> curr = head.getNext();

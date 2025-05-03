@@ -1,27 +1,29 @@
 package application;
 
+import java.util.Optional;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
-public class UpdatePage extends Scene {
+public class UpdatePage extends BorderPane {
 
-	static BorderPane addPane = new BorderPane();
 	private TextField idTf;
 	private TextField nameTf;
 	private TextField ageTf;
 	private MyButton updateB;
 	private MyButton clearB;
 	private MyButton cancelB;
+	private User selecteduser;
 
-	public UpdatePage(double h, double w, User user) {
-		super(addPane, h, w);
-
+	public UpdatePage(User user) {
+		this.selecteduser = user;
 //	create labels for the text fields
 		Label idL = new Label("ID");
 		Label nameL = new Label("Name");
@@ -31,15 +33,16 @@ public class UpdatePage extends Scene {
 		idTf = new TextField();
 		idTf.setPrefHeight(30);
 		idTf.setPrefWidth(200);
-		idTf.setText(user.getId());
+		idTf.setText(selecteduser.getId());
+		idTf.setDisable(true);
 		nameTf = new TextField();
 		nameTf.setPrefHeight(30);
 		nameTf.setPrefWidth(200);
-		nameTf.setText(user.getName());
+		nameTf.setText(selecteduser.getName());
 		ageTf = new TextField();
 		ageTf.setPrefHeight(30);
 		ageTf.setPrefWidth(200);
-		ageTf.setText(String.valueOf(user.getAge()));
+		ageTf.setText(String.valueOf(selecteduser.getAge()));
 
 		GridPane textFieldsGp = new GridPane();
 		textFieldsGp.addColumn(0, idL, idTf);
@@ -55,9 +58,9 @@ public class UpdatePage extends Scene {
 		MyLabel manageL = new MyLabel("Edit Book");
 		manageL.setPadding(new Insets(20, 0, 0, 30));
 
-		addPane.setTop(manageL);
-		addPane.setCenter(textFieldsGp);
-		addPane.setId("myBorderPane"); // Assign a unique ID
+		this.setTop(manageL);
+		this.setCenter(textFieldsGp);
+		this.setId("myBorderPane"); // Assign a unique ID
 
 		HBox buttonsHb = new HBox();
 		updateB = new MyButton();
@@ -78,7 +81,7 @@ public class UpdatePage extends Scene {
 
 		buttonsHb.getChildren().addAll(updateB, clearB, cancelB);
 
-		addPane.setBottom(buttonsHb);
+		this.setBottom(buttonsHb);
 
 		this.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 
@@ -89,5 +92,30 @@ public class UpdatePage extends Scene {
 
 		});
 
+		updateB.setOnAction(e -> {
+			ConfirmAlert confirmDelete = new ConfirmAlert("Are you sure you want to Update this user?");
+			Optional<ButtonType> result = confirmDelete.getAlert().showAndWait();
+			if (result.isPresent() && result.get() == confirmDelete.getSureButton()) {
+				try {
+					selecteduser.setName(nameTf.getText());
+					selecteduser.setAge(Integer.parseInt(ageTf.getText()));
+					UserManagement.getUsersTable().refresh();
+				} catch (NumberFormatException e1) {
+					new ErrorAlert("Error: The age must e numbers");
+				} catch (IllegalArgumentException e2) {
+					new ErrorAlert(e2.getMessage());
+				}
+
+			}
+
+		});
+	}
+
+	public User getSelecteduser() {
+		return selecteduser;
+	}
+
+	public void setSelecteduser(User selecteduser) {
+		this.selecteduser = selecteduser;
 	}
 }

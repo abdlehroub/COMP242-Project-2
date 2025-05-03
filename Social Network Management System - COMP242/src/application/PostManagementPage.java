@@ -1,26 +1,39 @@
 package application;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Optional;
+import java.util.Scanner;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class PostManagementPage extends BorderPane {
@@ -33,13 +46,17 @@ public class PostManagementPage extends BorderPane {
 	private MyButton deleteB;
 	private MyButton viewB;
 	private MyButton showSharedPostsB;
+	private File file;
 
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public PostManagementPage() {
 //		Get the first user to be the user in the UI and put his posts in the table 
-		currUser = Main.usersList.getFirst();
-		postsList = FXCollections.observableList(currUser.getPostsCreatedList().toArrayList());
-
+		if (currUser != null) {
+			currUser = Main.usersList.getFirst();
+			postsList = FXCollections.observableList(currUser.getPostsCreatedList().toArrayList());
+		} else {
+			postsList = FXCollections.observableArrayList();
+		}
 //		Create Next & Previous buttons to change the user
 		MyButton prevB = new MyButton();
 		prevB.setText("<");
@@ -89,6 +106,21 @@ public class PostManagementPage extends BorderPane {
 		HBox lowerHb = new HBox();
 		HBox upperHb = new HBox();
 
+//		ContextMenu to give more options 
+		ContextMenu actionsM = new ContextMenu();
+		MyButton actionsB = new MyButton();
+		actionsB.setText("More Actions");
+		actionsB.setPrefHeight(25);
+		actionsB.setPrefWidth(140);
+
+//		Items of the ContextMenu
+		MenuItem exportMi = (new MenuItem("Export to file"));
+		MenuItem loadMi = (new MenuItem("Load from file"));
+		MenuItem postsCreatedReportMi = (new MenuItem("Export Created Report"));
+		MenuItem postsSharedWithThemReportMi = (new MenuItem("Export Shared with them Report"));
+
+		actionsM.getItems().addAll(loadMi, exportMi, postsCreatedReportMi, postsSharedWithThemReportMi);
+
 //		Show the current user name and id
 		MyLabel userL = new MyLabel("User: " + currUser);
 		userL.setStyle("-fx-font-size: 15px; -fx-font-style: italic; -fx-text-fill: #635bff; -fx-font-weight: bold;");
@@ -105,7 +137,7 @@ public class PostManagementPage extends BorderPane {
 		searchB.setPrefWidth(60);
 
 //		Add the upper content to HBox
-		upperHb.getChildren().addAll(searchTf, searchB, userL);
+		upperHb.getChildren().addAll(searchTf, searchB, actionsB, userL);
 		upperHb.setAlignment(Pos.CENTER);
 		upperHb.setSpacing(20);
 
@@ -135,7 +167,7 @@ public class PostManagementPage extends BorderPane {
 
 //		Add the items of the lower HBox to it
 		lowerHb.getChildren().addAll(createPostB, viewB, showSharedPostsB, deleteB);
-		HBox.setMargin(searchB, new Insets(0, 180, 0, 0));
+		HBox.setMargin(actionsB, new Insets(0, 40, 0, 0));
 		lowerHb.setSpacing(10);
 		lowerHb.setAlignment(Pos.CENTER);
 
@@ -143,6 +175,10 @@ public class PostManagementPage extends BorderPane {
 		manageVb.getChildren().addAll(upperHb, tableHb, lowerHb);
 		this.setCenter(manageVb);
 		this.setPadding(new Insets(0, 10, 10, 10));
+
+		actionsB.setOnAction(e -> {
+			actionsM.show(actionsB, Side.BOTTOM, 0, 10);
+		});
 
 //		Action to go to the next user in the main users list
 		nextB.setOnAction(e -> {
@@ -181,8 +217,12 @@ public class PostManagementPage extends BorderPane {
 			createPostPage.getClearB().fire();
 		});
 		createPostB.setOnAction(e -> {
-			createPostPage.setCurrUser(currUser);
-			createStage.show();
+			if (currUser != null) {
+				createPostPage.setCurrUser(currUser);
+				createStage.show();
+			} else {
+				new ErrorAlert("Error: There is No User Selected!");
+			}
 		});
 		createPostPage.getCancelB().setOnAction(e -> {
 			createStage.close();
@@ -211,23 +251,191 @@ public class PostManagementPage extends BorderPane {
 		friendsPostsStage.setResizable(false);
 		Scene friendsPostsScene = new Scene(new Pane(), 600, 450);
 		showSharedPostsB.setOnAction(e -> {
-
-			if (!currUser.getSharedWithThemPostsList().isEmpty()) {
-				FriendsPosts friendsPostsPage = new FriendsPosts(currUser);
-				friendsPostsScene.setRoot(friendsPostsPage);
-				friendsPostsStage.setScene(friendsPostsScene);
-				friendsPostsStage.show();
+			if (currUser != null) {
+				if (!currUser.getSharedWithThemPostsList().isEmpty()) {
+					FriendsPosts friendsPostsPage = new FriendsPosts(currUser);
+					friendsPostsScene.setRoot(friendsPostsPage);
+					friendsPostsStage.setScene(friendsPostsScene);
+					friendsPostsStage.show();
+				} else {
+					new ErrorAlert("Error: There is No Posts shared with this user!");
+				}
 			} else {
-				new ErrorAlert("Error: There is No Posts shared with this user!");
+				new ErrorAlert("Error: There is No User Selected!");
+
+			}
+		});
+
+		loadMi.setOnAction(e -> {
+			try {
+				readFromFile();
+			} catch (FileNotFoundException e1) {
+				new ErrorAlert("Error: File not found!");
+			} catch (NullPointerException e2) {
+				new ErrorAlert("Error: No File Selected");
+			}
+		});
+
+		exportMi.setOnAction(e -> {
+			try {
+				exportToFile();
+			} catch (FileNotFoundException e1) {
+				new ErrorAlert("Error: File not found!");
+			} catch (NullPointerException e1) {
+				new ErrorAlert("Error: No Selected File!");
+			}
+		});
+		postsCreatedReportMi.setOnAction(e -> {
+			try {
+				exportCreatedPostsReport();
+			} catch (FileNotFoundException e1) {
+				new ErrorAlert("Error: File not found!");
+			} catch (NullPointerException e1) {
+				new ErrorAlert("Error: No Selected File!");
+			}
+		});
+
+		postsSharedWithThemReportMi.setOnAction(e -> {
+			try {
+				exportSharedWithThemPostsReport();
+			} catch (FileNotFoundException e1) {
+				new ErrorAlert("Error: File not found!");
+			} catch (NullPointerException e1) {
+				new ErrorAlert("Error: No Selected File!");
 			}
 		});
 
 	}
 
+	public void readFromFile() throws FileNotFoundException {
+		fileChooser();
+		Scanner in = new Scanner(file);
+		int errorCount = 0;
+		while (in.hasNextLine()) {
+			try {
+//				Post ID,Creator ID,Content,Creation Date,Shared Wit
+				String[] line = in.nextLine().split(",");
+				int postId = Integer.parseInt(line[0]);
+				String userId = line[1];
+				String content = line[2];
+				String[] creationDate = line[3].split("\\.");
+				int day = Integer.parseInt(creationDate[0]);
+				int month = Integer.parseInt(creationDate[1]) - 1;
+				int year = Integer.parseInt(creationDate[2]);
+				Post post = null;
+				for (User user : Main.usersList) {
+					if (user.getId().equals(userId)) {
+						post = new Post(postId, user, content, new GregorianCalendar(year, month, day));
+					}
+				}
+				for (int i = 4; i < line.length; i++) {
+					for (User user : post.getCreator().getFriendsList()) {
+						if (line[i].trim().equals(user.getId())) {
+							post.addSharedWith(user);
+							break;
+						} else if (!line[i].equals(user.getId())
+								&& user == post.getCreator().getFriendsList().getLast()) {
+							errorCount++;
+						}
+					}
+				}
+			} catch (NumberFormatException e) {
+				errorCount++;
+			} catch (IllegalArgumentException e) {
+				System.out.println(e);
+				errorCount++;
+			} catch (NullPointerException e) {
+				errorCount++;
+			} catch (ArrayIndexOutOfBoundsException e) {
+				new ErrorAlert("Error: Invalid File Format!");
+			}
+		}
+		if (errorCount > 0)
+			new ErrorAlert("Error: File data are loaded with [" + errorCount + "] Errors!");
+		else
+			new SuccessAlert("Great: File data are loaded without any error!");
+
+	}
+
+	public void exportToFile() throws FileNotFoundException {
+		fileChooser();
+		PrintWriter out = new PrintWriter(file);
+		for (User user : Main.usersList) {
+			for (Post post : user.getPostsCreatedList()) {
+//				Post ID,Creator ID,Content,Creation Date,Shared With
+				out.print(post.getId() + "," + user.getId() + "," + post.getContent() + ","
+						+ post.getCreationDate().get(Calendar.DAY_OF_MONTH) + "."
+						+ (post.getCreationDate().get(Calendar.MONTH) + 1) + "."
+						+ post.getCreationDate().get(Calendar.YEAR));
+				for (User sharedWith : post.getSharedWithList()) {
+					out.print("," + sharedWith.getId());
+				}
+				out.println();
+			}
+		}
+		out.close();
+
+	}
+
+	public void exportCreatedPostsReport() throws FileNotFoundException {
+		fileChooser();
+		PrintWriter out = new PrintWriter(file);
+		out.println("Posts Created Report\r\n" + "--------------------\r\n" + "");
+		for (User user : Main.usersList) {
+			if (user.getPostsCreatedList().isEmpty())
+				continue;
+			out.println("User: " + user.getName());
+			for (Post post : user.getPostsCreatedList()) {
+				out.print("-PostId: " + post.getId() + ",Content: " + post.getContent() + ","
+						+ post.getCreationDate().get(Calendar.DAY_OF_MONTH) + "."
+						+ (post.getCreationDate().get(Calendar.MONTH) + 1) + "."
+						+ post.getCreationDate().get(Calendar.YEAR) + ",Shared With: ");
+				for (User sharedWith : post.getSharedWithList()) {
+					if (sharedWith == post.getSharedWithList().getLast()) {
+						out.print(sharedWith.getName());
+						break;
+					}
+					out.print(sharedWith.getName() + ",");
+				}
+				out.println();
+			}
+		}
+		out.close();
+	}
+
+	public void exportSharedWithThemPostsReport() throws FileNotFoundException {
+		fileChooser();
+		PrintWriter out = new PrintWriter(file);
+		out.println("Posts Shared With User Report\r\n" + "--------------------\r\n" + "");
+		for (User user : Main.usersList) {
+			if (user.getSharedWithThemPostsList().isEmpty())
+				continue;
+			out.println("User: " + user.getName());
+			for (Post post : user.getSharedWithThemPostsList()) {
+				out.print("-PostId: " + post.getId() + ",Content: " + post.getContent() + ","
+						+ post.getCreationDate().get(Calendar.DAY_OF_MONTH) + "."
+						+ (post.getCreationDate().get(Calendar.MONTH) + 1) + "."
+						+ post.getCreationDate().get(Calendar.YEAR) + ",Shared With: " + post.getCreator().getName());
+				out.println();
+
+			}
+		}
+		out.close();
+	}
+
+//	method to open file chooser dialog
+	public void fileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+		file = fileChooser.showOpenDialog(new Stage());
+	}
+
 //	Method to refresh the data of the posts table
 	public static void refreshTable(User currUser) {
-		postsList.setAll(currUser.getPostsCreatedList().toArrayList());
-		postsTable.setItems(postsList);
+		if (currUser != null) {
+			postsList.setAll(currUser.getPostsCreatedList().toArrayList());
+			postsTable.setItems(postsList);
+		}
 	}
 
 }

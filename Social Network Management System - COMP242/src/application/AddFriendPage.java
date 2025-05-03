@@ -80,9 +80,9 @@ public class AddFriendPage extends Scene {
 //	Display all users are not friends of the current user
 	public void suggestedFriends() {
 		list = FXCollections.observableArrayList();
-		for (int i = 0; i < Main.usersList.size(); i++) {
-			if ((!currUser.getFriendsList().contains(Main.usersList.get(i))) && Main.usersList.get(i) != currUser)
-				list.add(Main.usersList.get(i));
+		for (User user : Main.usersList) {
+			if ((!currUser.getFriendsList().contains(user)) && user != currUser && currUser != null)
+				list.add(user);
 		}
 		usersTable.setItems(list);
 		addButtonToTable();
@@ -124,7 +124,7 @@ public class AddFriendPage extends Scene {
 					// Action for the button
 					button.setOnAction(e -> {
 						button.setDisable(true); // Disable after clicking
-						currUser.getFriendsList().addFirst(friend);
+						currUser.getFriendsList().insertSorted(friend);
 						FriendshipManagement.refreshData();
 
 						// Refresh the table to update button states

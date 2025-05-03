@@ -114,6 +114,24 @@ public class AddUserPage extends Scene {
 
 		});
 
+//		Action to add user to the system
+		addB.setOnAction(e -> {
+			try {
+				String id = idTf.getText();
+				String name = nameTf.getText();
+				int age = Integer.parseInt(ageTf.getText());
+				User user = new User(id, name, age);
+				user.getFriendsList().addAll(freindsLv.getSelectionModel().getSelectedItems());
+				Main.usersList.insertSorted(user);
+				Main.usersObList.add(user);
+			} catch (NumberFormatException e1) {
+				new ErrorAlert("Error: The age must e numbers");
+			} catch (IllegalArgumentException e2) {
+				new ErrorAlert(e2.getMessage());
+			}
+
+		});
+
 	}
 
 	public MyButton getCancelB() {

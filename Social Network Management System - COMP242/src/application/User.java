@@ -10,22 +10,23 @@ public class User implements Comparable<User> {
 	private LinkedList<Post> postsCreatedList;
 	private LinkedList<Post> sharedWithThemPostsList;
 	private SimpleBooleanProperty selected;
-	private static LinkedList<String> ids;
+	private static LinkedList<String> ids = new LinkedList<String>();
 
-	public User(String id, String name, int age) throws IllegalAccessException {
+	public User(String id, String name, int age) throws IllegalArgumentException {
 		setId(id);
-		this.name = name;
-		this.age = age;
+		setName(name);
+		setAge(age);
 		friendsList = new LinkedList<User>();
 		postsCreatedList = new LinkedList<Post>();
 		sharedWithThemPostsList = new LinkedList<Post>();
+		ids.addFirst(id);
 	}
 
-	public void setId(String id) throws IllegalAccessException {
+	public void setId(String id) throws IllegalArgumentException {
 		if (!ids.contains(id))
 			this.id = id;
 		else
-			throw new IllegalAccessException("Error: Invalid UserId");
+			throw new IllegalArgumentException("Error: Invalid UserId");
 	}
 
 	public String getId() {
@@ -41,7 +42,7 @@ public class User implements Comparable<User> {
 	}
 
 	public void setAge(int age) {
-		if (age < 0) {
+		if (age > 0) {
 			this.age = age;
 		} else {
 			throw new IllegalArgumentException("Error: Invalid age, it must be greater than zero!");
@@ -93,13 +94,22 @@ public class User implements Comparable<User> {
 	public void setSelected(boolean selected) {
 		this.selected.set(selected);
 	}
+	
+	
+	
+	public static LinkedList<String> getIds() {
+		return ids;
+	}
+
 
 	@Override
 	public int compareTo(User o) {
-		return postsCreatedList.size() - o.getPostsCreatedList().size();
+		return this.getName().compareTo(o.getName()) ;
 	}
 
 	public String toString() {
 		return id + " - " + name;
 	}
+
+	
 }

@@ -56,7 +56,7 @@ public class Post implements Comparable<Post> {
 	}
 
 	public void addToCreatorList() {
-		creator.getPostsCreatedList().addFirst(this);
+		creator.getPostsCreatedList().insertSorted(this);
 	}
 
 	public User getCreator() {
@@ -100,8 +100,8 @@ public class Post implements Comparable<Post> {
 	}
 
 	public void setSharedWithList(LinkedList<User> sharedWithList) {
-		for (int i = 0; i < sharedWithList.size(); i++) {
-			sharedWithList.get(i).getSharedWithThemPostsList().addFirst(this);
+		for (User user : sharedWithList) {
+			user.getSharedWithThemPostsList().addFirst(this);
 		}
 		this.sharedWithList = sharedWithList;
 	}
@@ -111,16 +111,16 @@ public class Post implements Comparable<Post> {
 		user.getSharedWithThemPostsList().remove(this);
 	}
 
-	public void removePost() {
-		for (int i = 0; i < sharedWithList.size(); i++) {
-			sharedWithList.get(i).getSharedWithThemPostsList().remove(this);
+	public void removePost() { // Remove the post with synchronize with the list of post created and others
+		for (User user : sharedWithList) {
+			user.getSharedWithThemPostsList().remove(this);
 		}
 	}
 
-	public String getSharedWithListPrinted() {
+	public String getSharedWithListPrinted() { // get the list of users shared with them post as String
 		StringBuilder users = new StringBuilder();
-		for (int i = 0; i < sharedWithList.size(); i++) {
-			users.append("[" + sharedWithList.get(i) + "] ");
+		for (User user : sharedWithList) {
+			users.append("[" + user + "] ");
 		}
 		return users.toString();
 	}
